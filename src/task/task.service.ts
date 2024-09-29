@@ -9,11 +9,13 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Task } from './entities/task.entity';
 import { Repository } from 'typeorm';
 import { User } from 'src/auth/entities/user.entity';
+import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class TaskService {
   constructor(
     @InjectRepository(Task) private readonly txRepo: Repository<Task>,
+    private configService: ConfigService,
   ) {}
   async createTask(createTaskDto: CreateTaskDto, user: User) {
     const { title, reward, status } = createTaskDto;
@@ -31,6 +33,10 @@ export class TaskService {
   async getAllTask(user: User): Promise<any> {
     const query = this.txRepo.createQueryBuilder('task');
     query.where({ user });
+    console.log(this.configService.get('DB_PORT'));
+    console.log(this.configService.get('DB_HOST'));
+
+    
 
     // if (status) {
     //  query.andWhere('task.status = :status', { status: status })
@@ -88,7 +94,7 @@ export class TaskService {
     if (!task) {
       throw new NotFoundException('Not Found');
     } else {
-       this.txRepo.update(id, updateTaskDto);
+      this.txRepo.update(id, updateTaskDto);
       return {
         message: 'Task updated successfully',
       };

@@ -34,7 +34,7 @@ export class AuthService {
 
     const user = await this.authRepo.findOne({ where: { username } });
     if (!user) {
-      throw new NotFoundException('Not Found');
+      throw new NotFoundException('Kindly check credentials');
     }
 
     const correctPassword = await bcrypt.compare(password, user.password);
